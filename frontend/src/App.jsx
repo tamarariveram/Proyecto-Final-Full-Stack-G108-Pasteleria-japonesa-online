@@ -12,6 +12,8 @@ import AdminProductos from './pages/AdminProductos'
 import AdminPedidos from './pages/AdminPedidos'
 import FormProducto from './pages/FormProducto'
 import NotFound from './pages/NotFound'
+import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 
 const App = () => {
   return (
@@ -25,11 +27,15 @@ const App = () => {
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/admin" element={<AdminProductos />} />
-          <Route path="/admin/pedidos" element={<AdminPedidos />} />
-          <Route path="/admin/producto/nuevo" element={<FormProducto />} />
-          <Route path="/admin/producto/:id" element={<FormProducto />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/perfil" element={<Perfil />} />
+          </Route>
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminProductos />} />
+            <Route path="/admin/pedidos" element={<AdminPedidos />} />
+            <Route path="/admin/producto/nuevo" element={<FormProducto />} />
+            <Route path="/admin/producto/:id" element={<FormProducto />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
