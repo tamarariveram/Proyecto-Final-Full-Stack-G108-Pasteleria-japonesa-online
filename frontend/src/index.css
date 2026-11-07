@@ -12,3 +12,24 @@ body {
   background-color: var(--kashi-washi);
   color: var(--kashi-sumi);
 }
+
+.header-kashi {
+  background-color: var(--kashi-washi);
+  border-bottom: 1px solid var(--kashi-anko);
+}
+
+.header-kashi .nav-link.active {
+  color: var(--kashi-matcha);
+  font-weight: 600;
+  border-bottom: 2px solid var(--kashi-matcha);
+}
+
+.footer-kashi {
+  background-color: var(--kashi-matcha);
+  color: var(--kashi-washi);
+}
+
+.footer-kashi a {
+  color: var(--kashi-washi);
+  text-decoration: none;
+}
