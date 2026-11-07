@@ -3,10 +3,12 @@ import { Row, Col, Card, Button } from 'react-bootstrap'
 import Swal from 'sweetalert2'
 import CartItem from '../components/CartItem'
 import { useCart } from '../hooks/useCart'
+import { useAuth } from '../hooks/useAuth'
 import { formatearPrecio } from '../utils/formato'
 
 const Carrito = () => {
   const { carrito, total, cantidadTotal, vaciarCarrito } = useCart()
+  const { usuario } = useAuth()
   const navigate = useNavigate()
 
   const handleVaciar = async () => {
@@ -25,8 +27,32 @@ const Carrito = () => {
     }
   }
 
-  const handlePagar = () => {
-    navigate('/login')
+  const handlePagar = async () => {
+    if (!usuario) {
+      navigate('/login', { state: { desde: '/carrito' } })
+      return
+    }
+
+    const respuesta = await Swal.fire({
+      title: 'Confirmar pedido',
+      text: `Total a pagar: ${formatearPrecio(total)}`,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Seguir comprando',
+      confirmButtonColor: '#2f4a3a',
+    })
+
+    if (respuesta.isConfirmed) {
+      vaciarCarrito()
+      await Swal.fire({
+        title: '¡Gracias por tu compra!',
+        text: 'Tu pedido quedó registrado.',
+        icon: 'success',
+        confirmButtonColor: '#2f4a3a',
+      })
+      navigate('/perfil')
+    }
   }
 
   if (carrito.length === 0) {

@@ -1,9 +1,17 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Navbar, Nav, Container, Button, Badge } from 'react-bootstrap'
 import { useCart } from '../hooks/useCart'
+import { useAuth } from '../hooks/useAuth'
 
 const Header = () => {
   const { cantidadTotal } = useCart()
+  const { usuario, esAdmin, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   return (
     <Navbar expand="md" sticky="top" className="header-kashi">
@@ -20,11 +28,27 @@ const Header = () => {
             <Nav.Link as={NavLink} to="/tienda">
               Tienda
             </Nav.Link>
+            {esAdmin && (
+              <Nav.Link as={NavLink} to="/admin">
+                Admin
+              </Nav.Link>
+            )}
           </Nav>
           <div className="d-flex align-items-center gap-2">
-            <Button as={Link} to="/login" variant="outline-dark" size="sm">
-              Ingresar
-            </Button>
+            {usuario ? (
+              <>
+                <Nav.Link as={NavLink} to="/perfil" className="small">
+                  Hola, {usuario.nombre.split(' ')[0]}
+                </Nav.Link>
+                <Button variant="outline-dark" size="sm" onClick={handleLogout}>
+                  Salir
+                </Button>
+              </>
+            ) : (
+              <Button as={Link} to="/login" variant="outline-dark" size="sm">
+                Ingresar
+              </Button>
+            )}
             <Button as={Link} to="/carrito" variant="dark" size="sm">
               🛒 <Badge bg="light" text="dark">{cantidadTotal}</Badge>
             </Button>
