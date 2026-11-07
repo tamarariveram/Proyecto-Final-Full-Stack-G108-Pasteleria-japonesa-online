@@ -1,10 +1,21 @@
 import { Link } from 'react-router-dom'
 import { Card, Button, Badge } from 'react-bootstrap'
 import { formatearPrecio } from '../utils/formato'
+import { useCart } from '../hooks/useCart'
+import { avisoAgregado, avisoSinStock } from '../utils/alertas'
 
 const ProductCard = ({ producto }) => {
   const { id, nombre, precio, imagen_url, stock, categoria } = producto
   const agotado = stock === 0
+  const { agregarAlCarrito } = useCart()
+
+  const handleAgregar = () => {
+    if (agregarAlCarrito(producto)) {
+      avisoAgregado(nombre)
+    } else {
+      avisoSinStock()
+    }
+  }
 
   return (
     <Card className="h-100 card-producto">
@@ -21,7 +32,7 @@ const ProductCard = ({ producto }) => {
           {agotado ? (
             <Badge bg="secondary">Agotado</Badge>
           ) : (
-            <Button variant="dark" size="sm" className="rounded-circle" aria-label={`Agregar ${nombre} al carrito`}>
+            <Button variant="dark" size="sm" className="rounded-circle" onClick={handleAgregar} aria-label={`Agregar ${nombre} al carrito`}>
               +
             </Button>
           )}

@@ -1,7 +1,10 @@
 import { Link, NavLink } from 'react-router-dom'
 import { Navbar, Nav, Container, Button, Badge } from 'react-bootstrap'
+import { useCart } from '../hooks/useCart'
 
 const Header = () => {
+  const { cantidadTotal } = useCart()
+
   return (
     <Navbar expand="md" sticky="top" className="header-kashi">
       <Container>
@@ -23,7 +26,7 @@ const Header = () => {
               Ingresar
             </Button>
             <Button as={Link} to="/carrito" variant="dark" size="sm">
-              🛒 <Badge bg="light" text="dark">0</Badge>
+              🛒 <Badge bg="light" text="dark">{cantidadTotal}</Badge>
             </Button>
           </div>
         </Navbar.Collapse>

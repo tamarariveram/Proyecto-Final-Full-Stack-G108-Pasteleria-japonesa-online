@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { Button } from 'react-bootstrap'
+import { useCart } from '../hooks/useCart'
+import { avisoAgregado, avisoSinStock } from '../utils/alertas'
 
 const AgregarAlCarrito = ({ producto }) => {
   const [cantidad, setCantidad] = useState(1)
+  const { agregarAlCarrito } = useCart()
 
   if (producto.stock === 0) {
     return (
@@ -15,6 +18,15 @@ const AgregarAlCarrito = ({ producto }) => {
   const disminuir = () => setCantidad((actual) => actual - 1)
   const aumentar = () => setCantidad((actual) => actual + 1)
 
+  const handleAgregar = () => {
+    if (agregarAlCarrito(producto, cantidad)) {
+      avisoAgregado(producto.nombre)
+      setCantidad(1)
+    } else {
+      avisoSinStock()
+    }
+  }
+
   return (
     <div className="d-flex align-items-center gap-3">
       <div className="d-flex align-items-center border border-dark rounded-pill">
@@ -26,7 +38,7 @@ const AgregarAlCarrito = ({ producto }) => {
           +
         </Button>
       </div>
-      <Button variant="dark" className="flex-grow-1 rounded-pill">
+      <Button variant="dark" className="flex-grow-1 rounded-pill" onClick={handleAgregar}>
         Agregar al carrito
       </Button>
     </div>
