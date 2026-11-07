@@ -53,3 +53,9 @@ body {
 .card-producto-nombre:hover {
   color: var(--kashi-matcha);
 }
+
+.imagen-detalle {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
