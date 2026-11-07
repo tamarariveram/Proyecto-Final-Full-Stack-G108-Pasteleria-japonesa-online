@@ -4,11 +4,13 @@ import Swal from 'sweetalert2'
 import CartItem from '../components/CartItem'
 import { useCart } from '../hooks/useCart'
 import { useAuth } from '../hooks/useAuth'
+import { usePedidos } from '../hooks/usePedidos'
 import { formatearPrecio } from '../utils/formato'
 
 const Carrito = () => {
   const { carrito, total, cantidadTotal, vaciarCarrito } = useCart()
   const { usuario } = useAuth()
+  const { crearPedido } = usePedidos()
   const navigate = useNavigate()
 
   const handleVaciar = async () => {
@@ -44,6 +46,7 @@ const Carrito = () => {
     })
 
     if (respuesta.isConfirmed) {
+      crearPedido(usuario, carrito, total)
       vaciarCarrito()
       await Swal.fire({
         title: '¡Gracias por tu compra!',

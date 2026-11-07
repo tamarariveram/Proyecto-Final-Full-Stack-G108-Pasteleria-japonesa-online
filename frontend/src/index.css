@@ -69,3 +69,20 @@ body {
 .form-kashi {
   max-width: 440px;
 }
+
+.avatar-kashi {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background-color: var(--kashi-matcha);
+  color: var(--kashi-washi);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.tabla-kashi {
+  --bs-table-bg: transparent;
+}
