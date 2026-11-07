@@ -33,3 +33,23 @@ body {
   color: var(--kashi-washi);
   text-decoration: none;
 }
+
+.card-producto {
+  border-color: var(--kashi-anko);
+  overflow: hidden;
+}
+
+.card-producto img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.card-producto-nombre {
+  color: var(--kashi-sumi);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.card-producto-nombre:hover {
+  color: var(--kashi-matcha);
+}
