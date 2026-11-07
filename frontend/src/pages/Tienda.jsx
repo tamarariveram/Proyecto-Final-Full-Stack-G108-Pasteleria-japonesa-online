@@ -1,18 +1,42 @@
+import { useState } from 'react'
 import { Row, Col } from 'react-bootstrap'
 import ProductCard from '../components/ProductCard'
+import CategoryFilter from '../components/CategoryFilter'
 import { productos } from '../data/productos'
+import { categorias } from '../data/categorias'
 
 const Tienda = () => {
+  const [categoriaActiva, setCategoriaActiva] = useState('Todas')
+
+  const productosFiltrados =
+    categoriaActiva === 'Todas'
+      ? productos
+      : productos.filter((producto) => producto.categoria.nombre === categoriaActiva)
+
   return (
     <main className="container py-5">
       <h1>Tienda</h1>
-      <p className="text-muted mb-4">{productos.length} productos</p>
-      <Row xs={1} sm={2} lg={3} className="g-4">
-        {productos.map((producto) => (
-          <Col key={producto.id}>
-            <ProductCard producto={producto} />
-          </Col>
-        ))}
+      <Row className="mt-4 g-4">
+        <Col lg={3}>
+          <h2 className="h6 text-muted mb-3">Categorías</h2>
+          <CategoryFilter
+            categorias={categorias}
+            categoriaActiva={categoriaActiva}
+            onSeleccionar={setCategoriaActiva}
+          />
+        </Col>
+        <Col lg={9}>
+          <p className="text-muted">
+            {productosFiltrados.length} {productosFiltrados.length === 1 ? 'producto' : 'productos'}
+          </p>
+          <Row xs={1} sm={2} xl={3} className="g-4">
+            {productosFiltrados.map((producto) => (
+              <Col key={producto.id}>
+                <ProductCard producto={producto} />
+              </Col>
+            ))}
+          </Row>
+        </Col>
       </Row>
     </main>
   )
