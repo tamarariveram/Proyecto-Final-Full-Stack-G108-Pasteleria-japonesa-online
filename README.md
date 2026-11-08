@@ -3,6 +3,15 @@
 Proyecto Final · Desarrollo Full Stack JavaScript · Desafío Latam G108
 Autora: Tamara Rivera
 
+🌐 **Demo:** [kashi-steel.vercel.app](https://kashi-steel.vercel.app/)
+
+**Cuentas de prueba**
+
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Cliente | tamara@correo.cl | MiClave123 |
+| Admin | admin@kashi.cl | Admin123 |
+
 ## El proyecto
 
 **Kashi** es una tienda online de wagashi (dulces tradicionales japoneses: mochi, dorayaki, daifuku, té y matcha). Funciona como marketplace de vendedor único:
@@ -16,11 +25,63 @@ Autora: Tamara Rivera
 
 | Capa | Tecnología |
 |---|---|
-| Frontend | React + Vite, React Router, Context API, Axios, Bootstrap |
+| Frontend | React + Vite, React Router, Context API, React Bootstrap, SweetAlert2 |
 | Backend | Node.js, Express, JWT, bcryptjs |
 | Base de datos | PostgreSQL |
 | Testing | Jest + Supertest |
-| Despliegue | Render + PostgreSQL online |
+| Despliegue | Vercel (frontend) · Render (backend) · Supabase o Neon (base de datos) |
+
+## Instalación (frontend)
+
+Requisitos: Node.js 20.19 o superior y npm.
+
+```bash
+git clone https://github.com/tamarariveram/Proyecto-Final-Full-Stack-G108-Pasteleria-japonesa-online.git
+cd Proyecto-Final-Full-Stack-G108-Pasteleria-japonesa-online/frontend
+npm install
+npm run dev
+```
+
+Abrir [http://localhost:5173](http://localhost:5173).
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Levanta el servidor de desarrollo |
+| `npm run build` | Genera la versión de producción en `dist/` |
+| `npm run preview` | Muestra la versión de producción en local |
+| `npm run lint` | Revisa el código con ESLint |
+
+## Hito 2 · Frontend
+
+Por ahora la app usa **datos simulados** (carpeta `src/data`) con los mismos campos del [contrato de la API](./documentation/API_CONTRACT.md). El carrito, la sesión, los productos y los pedidos se guardan en el `localStorage` del navegador. En el Hito 3 los contextos pasarán a usar `fetch` contra el backend.
+
+### Estructura
+
+```
+frontend/src
+├── components   Header, Footer, ProductCard, CartItem, CategoryFilter, rutas protegidas...
+├── context      AuthContext, ProductContext, PedidosContext, CartContext
+├── data         Datos simulados (productos, categorías, usuarios, pedidos)
+├── hooks        useAuth, useProductos, usePedidos, useCart
+├── pages        Una vista por ruta
+└── utils        Formato de precios y fechas, alertas
+```
+
+### Qué se puede hacer
+
+- **Sin sesión:** ver productos, filtrar por categoría, ver el detalle y armar el carrito. Al pagar se redirige al login.
+- **Cliente:** registrarse, iniciar sesión, comprar y ver sus pedidos en `/perfil`.
+- **Admin:** crear, editar y eliminar productos (no deja eliminar productos con pedidos) y cambiar el estado de los pedidos.
+
+### Requerimientos del hito
+
+| Requerimiento | Dónde |
+|---|---|
+| Proyecto con Vite e instalación de dependencias | `frontend/package.json` |
+| React Router con `Link` y redirección con `useNavigate` | `App.jsx`, `Header.jsx`, `Detalle.jsx`, `Carrito.jsx`, `Login.jsx` |
+| Componentes reutilizables con props y `.map()` | `ProductCard`, `CartItem`, `CategoryFilter`, `EstadoPedido` |
+| Hooks además de `useState` | `useEffect`, `useContext`, `useRef`, `useParams`, `useNavigate` y custom hooks |
+| Context API para el estado global | 4 contextos en `src/context` |
 
 ## Hito 1 · Diseño y prototipo
 

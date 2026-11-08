@@ -1,28 +1,26 @@
 # Kashi · Dependencias del proyecto
 
-Proyecto Final G108 · Hito 1 - Diseño y prototipo · Tamara Rivera
+Proyecto Final G108 · Tamara Rivera · Actualizado en el Hito 2
 
 > Versión con diseño: [`Dependencias.pdf`](./Dependencias.pdf)
 
 ## Frontend (React + Vite)
 
-Proyecto creado con `npm create vite@latest kashi-frontend -- --template react`
+Proyecto creado con `npm create vite@latest frontend -- --template react`
 
 | Dependencia | Tipo | Para qué se usa en Kashi |
 |---|---|---|
 | `react` / `react-dom` | Producción | Librería base de la interfaz (vienen con Vite) |
 | `react-router-dom` | Producción | Rutas de las vistas, `Link`, `useNavigate` y rutas protegidas |
-| `axios` | Producción | Peticiones HTTP a la API REST |
 | `bootstrap` | Producción | Grilla, utilidades y estilos base responsive |
-| `react-bootstrap` | Producción | Componentes de Bootstrap como componentes React (Navbar, Card, Modal, Form) |
-| `sweetalert2` | Producción | Alertas de confirmación ("¿Eliminar producto?", "¡Compra realizada!") |
-| `framer-motion` | Producción | Animaciones suaves de entrada y transiciones |
+| `react-bootstrap` | Producción | Componentes de Bootstrap como componentes React (Navbar, Card, Table, Form) |
+| `sweetalert2` | Producción | Alertas de confirmación y avisos ("¿Eliminar producto?", "¡Gracias por tu compra!") |
 | `vite` | Desarrollo | Servidor de desarrollo y build |
 
-> El estado global (usuario logueado y carrito) se maneja con **Context API**, incluida en React (no requiere instalación).
+> El estado global (sesión, productos, pedidos y carrito) se maneja con **Context API**, y las peticiones a la API se harán con **`fetch`**. Los dos vienen incluidos (no requieren instalación).
 
 ```bash
-npm install react-router-dom axios bootstrap react-bootstrap sweetalert2 framer-motion
+npm install react-router-dom bootstrap react-bootstrap sweetalert2
 ```
 
 ## Backend (Node.js + Express)
@@ -52,5 +50,6 @@ npm install -D nodemon jest supertest
 | Herramienta | Uso |
 |---|---|
 | PostgreSQL | Base de datos relacional |
-| Render | Despliegue del frontend y del backend |
+| Vercel | Despliegue del frontend |
+| Render | Despliegue del backend |
 | Supabase / Neon | Base de datos PostgreSQL online |
