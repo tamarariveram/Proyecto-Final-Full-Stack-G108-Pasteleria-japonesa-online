@@ -111,3 +111,7 @@ body {
   background-color: var(--kashi-anko);
   color: var(--kashi-sumi);
 }
+
+.select-estado {
+  min-width: 130px;
+}
