@@ -12,9 +12,11 @@ Proyecto creado con `npm create vite@latest frontend -- --template react`
 |---|---|---|
 | `react` / `react-dom` | Producción | Librería base de la interfaz (vienen con Vite) |
 | `react-router-dom` | Producción | Rutas de las vistas, `Link`, `useNavigate` y rutas protegidas |
+| `fetch` | Incluido | Peticiones HTTP a la API REST (viene con JavaScript, no se instala) |
 | `bootstrap` | Producción | Grilla, utilidades y estilos base responsive |
 | `react-bootstrap` | Producción | Componentes de Bootstrap como componentes React (Navbar, Card, Table, Form) |
-| `sweetalert2` | Producción | Alertas de confirmación y avisos ("¿Eliminar producto?", "¡Gracias por tu compra!") |
+| `sweetalert2` | Producción | Alertas de confirmación ("¿Eliminar producto?", "¡Gracias por tu compra!") |
+| `eslint` | Desarrollo | Revisa el código y avisa errores (viene con Vite) |
 | `vite` | Desarrollo | Servidor de desarrollo y build |
 
 > El estado global (sesión, productos, pedidos y carrito) se maneja con **Context API**, y las peticiones a la API se harán con **`fetch`**. Los dos vienen incluidos (no requieren instalación).
@@ -50,6 +52,5 @@ npm install -D nodemon jest supertest
 | Herramienta | Uso |
 |---|---|
 | PostgreSQL | Base de datos relacional |
-| Vercel | Despliegue del frontend |
-| Render | Despliegue del backend |
+| Vercel / Render | Despliegue del frontend (Vercel) y del backend (Render) |
 | Supabase / Neon | Base de datos PostgreSQL online |
