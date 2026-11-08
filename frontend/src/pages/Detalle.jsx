@@ -3,18 +3,19 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Row, Col, Button, Badge, Image } from 'react-bootstrap'
 import ProductCard from '../components/ProductCard'
 import AgregarAlCarrito from '../components/AgregarAlCarrito'
-import { productos } from '../data/productos'
+import { useProductos } from '../hooks/useProductos'
 import { formatearPrecio } from '../utils/formato'
 
 const Detalle = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { productos, obtenerProducto } = useProductos()
 
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [id])
 
-  const producto = productos.find((item) => item.id === id)
+  const producto = obtenerProducto(id)
 
   if (!producto) {
     return (

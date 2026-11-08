@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Row, Col } from 'react-bootstrap'
 import ProductCard from '../components/ProductCard'
 import CategoryFilter from '../components/CategoryFilter'
-import { productos } from '../data/productos'
-import { categorias } from '../data/categorias'
+import { useProductos } from '../hooks/useProductos'
 
 const Tienda = () => {
   const [categoriaActiva, setCategoriaActiva] = useState('Todas')
+  const { productos, categorias } = useProductos()
 
   const productosFiltrados =
     categoriaActiva === 'Todas'

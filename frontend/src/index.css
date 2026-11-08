@@ -86,3 +86,19 @@ body {
 .tabla-kashi {
   --bs-table-bg: transparent;
 }
+
+.admin-img {
+  width: 56px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.admin-nav .nav-link {
+  color: var(--kashi-sumi);
+}
+
+.admin-nav .nav-link.active {
+  color: var(--kashi-matcha);
+  font-weight: 600;
+  background-color: transparent;
+}

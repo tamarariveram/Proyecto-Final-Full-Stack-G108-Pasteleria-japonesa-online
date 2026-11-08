@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import { Row, Col, Button } from 'react-bootstrap'
 import ProductCard from '../components/ProductCard'
-import { productos } from '../data/productos'
+import { useProductos } from '../hooks/useProductos'
 
 const Home = () => {
+  const { productos } = useProductos()
   const destacados = productos.filter((producto) => producto.destacado)
 
   return (
