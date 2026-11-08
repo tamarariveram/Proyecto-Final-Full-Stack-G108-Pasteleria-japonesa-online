@@ -11,6 +11,90 @@
 body {
   background-color: var(--kashi-washi);
   color: var(--kashi-sumi);
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+h1,
+h2,
+h3,
+.navbar-brand,
+.titulo-kashi {
+  font-family: 'Shippori Mincho', serif;
+}
+
+.btn-dark {
+  --bs-btn-bg: var(--kashi-matcha);
+  --bs-btn-border-color: var(--kashi-matcha);
+  --bs-btn-hover-bg: #243a2d;
+  --bs-btn-hover-border-color: #243a2d;
+  --bs-btn-active-bg: #1b2c22;
+  --bs-btn-active-border-color: #1b2c22;
+  --bs-btn-disabled-bg: var(--kashi-matcha);
+  --bs-btn-disabled-border-color: var(--kashi-matcha);
+}
+
+.btn-outline-dark {
+  --bs-btn-color: var(--kashi-matcha);
+  --bs-btn-border-color: var(--kashi-matcha);
+  --bs-btn-hover-bg: var(--kashi-matcha);
+  --bs-btn-hover-border-color: var(--kashi-matcha);
+  --bs-btn-active-bg: var(--kashi-matcha);
+  --bs-btn-active-border-color: var(--kashi-matcha);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--kashi-matcha);
+  box-shadow: 0 0 0 0.2rem rgba(47, 74, 58, 0.2);
+}
+
+.form-check-input:checked {
+  background-color: var(--kashi-matcha);
+  border-color: var(--kashi-matcha);
+}
+
+a {
+  color: var(--kashi-matcha);
+}
+
+.hero-kashi {
+  background-color: var(--kashi-matcha-claro);
+  border-radius: 1.5rem;
+}
+
+.hero-sello {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background-color: var(--kashi-sakura);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 7rem;
+  color: var(--kashi-matcha);
+  position: relative;
+}
+
+.hero-sello::after {
+  content: '菓';
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  background-color: var(--kashi-hanko);
+  color: var(--kashi-washi);
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.beneficio-icono {
+  font-size: 2rem;
 }
 
 .header-kashi {
