@@ -4,10 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './index.css'
 import App from './App.jsx'
-import { CartProvider } from './context/CartProvider'
-import { AuthProvider } from './context/AuthProvider'
-import { PedidosProvider } from './context/PedidosProvider'
-import { ProductProvider } from './context/ProductProvider'
+import CartProvider from './context/CartContext'
+import AuthProvider from './context/AuthContext'
+import PedidosProvider from './context/PedidosContext'
+import ProductProvider from './context/ProductContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

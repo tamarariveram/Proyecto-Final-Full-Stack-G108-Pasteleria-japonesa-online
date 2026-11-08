@@ -1,15 +1,16 @@
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Card, Form, Button, Alert } from 'react-bootstrap'
 import { useAuth } from '../hooks/useAuth'
+import { useCart } from '../hooks/useCart'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const { login } = useAuth()
+  const { cantidadTotal } = useCart()
   const navigate = useNavigate()
-  const location = useLocation()
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -26,8 +27,13 @@ const Login = () => {
       return
     }
 
-    const destino = location.state?.desde ?? (resultado.usuario.rol === 'admin' ? '/admin' : '/perfil')
-    navigate(destino, { replace: true })
+    if (resultado.usuario.rol === 'admin') {
+      navigate('/admin')
+    } else if (cantidadTotal > 0) {
+      navigate('/carrito')
+    } else {
+      navigate('/perfil')
+    }
   }
 
   return (
@@ -50,7 +56,7 @@ const Login = () => {
             </Button>
           </Form>
           <p className="text-center mt-3 mb-0">
-            ¿No tienes cuenta? <Link to="/registro" state={location.state}>Regístrate</Link>
+            ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
           </p>
           <div className="small text-muted border-top mt-4 pt-3">
             <div className="fw-semibold mb-1">Cuentas de prueba</div>

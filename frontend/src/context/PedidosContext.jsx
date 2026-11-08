@@ -1,14 +1,10 @@
-import { useEffect, useState } from 'react'
-import { PedidosContext } from './PedidosContext'
+import { createContext, useEffect, useState } from 'react'
 import { pedidos as pedidosIniciales } from '../data/pedidos'
 
-const leerPedidosGuardados = () => {
-  const guardados = localStorage.getItem('kashi-pedidos')
-  return guardados ? JSON.parse(guardados) : pedidosIniciales
-}
+export const PedidosContext = createContext()
 
-export const PedidosProvider = ({ children }) => {
-  const [pedidos, setPedidos] = useState(leerPedidosGuardados)
+const PedidosProvider = ({ children }) => {
+  const [pedidos, setPedidos] = useState(JSON.parse(localStorage.getItem('kashi-pedidos')) || pedidosIniciales)
 
   useEffect(() => {
     localStorage.setItem('kashi-pedidos', JSON.stringify(pedidos))
@@ -50,3 +46,5 @@ export const PedidosProvider = ({ children }) => {
     </PedidosContext.Provider>
   )
 }
+
+export default PedidosProvider

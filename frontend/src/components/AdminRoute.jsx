@@ -1,19 +1,18 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
-const AdminRoute = () => {
+const AdminRoute = ({ children }) => {
   const { usuario, esAdmin } = useAuth()
-  const location = useLocation()
 
   if (!usuario) {
-    return <Navigate to="/login" replace state={{ desde: location.pathname }} />
+    return <Navigate to="/login" />
   }
 
   if (!esAdmin) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/" />
   }
 
-  return <Outlet />
+  return children
 }
 
 export default AdminRoute

@@ -7,7 +7,7 @@ const estilos = {
 }
 
 const EstadoPedido = ({ estado }) => {
-  const { bg, text } = estilos[estado] ?? { bg: 'secondary', text: 'light' }
+  const { bg, text } = estilos[estado] || { bg: 'secondary', text: 'light' }
 
   return (
     <Badge bg={bg} text={text} className="text-capitalize">

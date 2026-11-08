@@ -1,12 +1,8 @@
-import { useEffect, useState } from 'react'
-import { ProductContext } from './ProductContext'
+import { createContext, useEffect, useState } from 'react'
 import { productos as productosIniciales } from '../data/productos'
 import { categorias } from '../data/categorias'
 
-const leerProductosGuardados = () => {
-  const guardados = localStorage.getItem('kashi-productos')
-  return guardados ? JSON.parse(guardados) : productosIniciales
-}
+export const ProductContext = createContext()
 
 const armarProducto = (datos) => {
   const { categoria_id, ...resto } = datos
@@ -14,8 +10,8 @@ const armarProducto = (datos) => {
   return { ...resto, categoria }
 }
 
-export const ProductProvider = ({ children }) => {
-  const [productos, setProductos] = useState(leerProductosGuardados)
+const ProductProvider = ({ children }) => {
+  const [productos, setProductos] = useState(JSON.parse(localStorage.getItem('kashi-productos')) || productosIniciales)
 
   useEffect(() => {
     localStorage.setItem('kashi-productos', JSON.stringify(productos))
@@ -43,3 +39,5 @@ export const ProductProvider = ({ children }) => {
     </ProductContext.Provider>
   )
 }
+
+export default ProductProvider

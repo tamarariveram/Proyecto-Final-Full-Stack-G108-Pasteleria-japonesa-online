@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react'
-import { AuthContext } from './AuthContext'
+import { createContext, useEffect, useState } from 'react'
 import { usuarios } from '../data/usuarios'
 
-const leerSesionGuardada = () => {
-  const guardada = localStorage.getItem('kashi-usuario')
-  return guardada ? JSON.parse(guardada) : null
-}
+export const AuthContext = createContext()
 
 const datosPublicos = ({ id, nombre, email, rol }) => ({ id, nombre, email, rol })
 
-export const AuthProvider = ({ children }) => {
-  const [usuario, setUsuario] = useState(leerSesionGuardada)
+const AuthProvider = ({ children }) => {
+  const [usuario, setUsuario] = useState(JSON.parse(localStorage.getItem('kashi-usuario')))
   const [cuentas, setCuentas] = useState(usuarios)
 
   useEffect(() => {
@@ -36,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   const registrar = (nombre, email, password) => {
     const correo = email.trim().toLowerCase()
 
-    if (cuentas.some((item) => item.email === correo)) {
+    if (cuentas.find((item) => item.email === correo)) {
       return { ok: false, mensaje: 'Ya existe una cuenta con ese correo' }
     }
 
@@ -65,3 +61,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   )
 }
+
+export default AuthProvider

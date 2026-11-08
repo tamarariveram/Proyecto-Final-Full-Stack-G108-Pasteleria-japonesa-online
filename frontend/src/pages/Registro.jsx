@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Card, Form, Button, Alert } from 'react-bootstrap'
 import { useAuth } from '../hooks/useAuth'
+import { useCart } from '../hooks/useCart'
 
 const formularioInicial = { nombre: '', email: '', password: '', confirmar: '' }
 
@@ -9,8 +10,8 @@ const Registro = () => {
   const [formulario, setFormulario] = useState(formularioInicial)
   const [error, setError] = useState('')
   const { registrar } = useAuth()
+  const { cantidadTotal } = useCart()
   const navigate = useNavigate()
-  const location = useLocation()
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -26,7 +27,7 @@ const Registro = () => {
       return
     }
 
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
+    if (!email.includes('@') || !email.includes('.')) {
       setError('Ingresa un correo válido')
       return
     }
@@ -48,7 +49,11 @@ const Registro = () => {
       return
     }
 
-    navigate(location.state?.desde ?? '/perfil', { replace: true })
+    if (cantidadTotal > 0) {
+      navigate('/carrito')
+    } else {
+      navigate('/perfil')
+    }
   }
 
   return (
@@ -79,7 +84,7 @@ const Registro = () => {
             </Button>
           </Form>
           <p className="text-center mt-3 mb-0">
-            ¿Ya tienes cuenta? <Link to="/login" state={location.state}>Inicia sesión</Link>
+            ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
           </p>
         </Card.Body>
       </Card>

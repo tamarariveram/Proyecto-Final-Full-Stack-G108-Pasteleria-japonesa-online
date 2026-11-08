@@ -25,9 +25,10 @@ const aFormulario = (producto) => ({
   destacado: producto.destacado,
 })
 
-const esEnteroValido = (valor, minimo) => /^\d+$/.test(valor) && Number(valor) >= minimo
+const esEnteroValido = (valor, minimo) => valor !== '' && Number.isInteger(Number(valor)) && Number(valor) >= minimo
 
-const FormularioProducto = ({ id }) => {
+const FormProducto = () => {
+  const { id } = useParams()
   const { categorias, obtenerProducto, crearProducto, actualizarProducto } = useProductos()
   const navigate = useNavigate()
   const inputNombre = useRef(null)
@@ -175,11 +176,6 @@ const FormularioProducto = ({ id }) => {
       </Row>
     </main>
   )
-}
-
-const FormProducto = () => {
-  const { id } = useParams()
-  return <FormularioProducto key={id ?? 'nuevo'} id={id} />
 }
 
 export default FormProducto

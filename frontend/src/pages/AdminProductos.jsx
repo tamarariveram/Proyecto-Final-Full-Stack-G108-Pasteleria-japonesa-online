@@ -10,7 +10,7 @@ const AdminProductos = () => {
   const { productos, eliminarProducto } = useProductos()
   const { pedidos } = usePedidos()
 
-  const tienePedidos = (id) => pedidos.some((pedido) => pedido.items.some((item) => item.producto_id === id))
+  const tienePedidos = (id) => pedidos.find((pedido) => pedido.items.find((item) => item.producto_id === id))
 
   const handleEliminar = async (producto) => {
     if (tienePedidos(producto.id)) {

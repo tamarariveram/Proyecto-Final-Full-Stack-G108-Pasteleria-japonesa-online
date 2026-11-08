@@ -27,15 +27,46 @@ const App = () => {
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/perfil" element={<Perfil />} />
-          </Route>
-          <Route element={<AdminRoute />}>
-            <Route path="/admin" element={<AdminProductos />} />
-            <Route path="/admin/pedidos" element={<AdminPedidos />} />
-            <Route path="/admin/producto/nuevo" element={<FormProducto />} />
-            <Route path="/admin/producto/:id" element={<FormProducto />} />
-          </Route>
+          <Route
+            path="/perfil"
+            element={
+              <ProtectedRoute>
+                <Perfil />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminProductos />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/pedidos"
+            element={
+              <AdminRoute>
+                <AdminPedidos />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/producto/nuevo"
+            element={
+              <AdminRoute>
+                <FormProducto />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/producto/:id"
+            element={
+              <AdminRoute>
+                <FormProducto />
+              </AdminRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

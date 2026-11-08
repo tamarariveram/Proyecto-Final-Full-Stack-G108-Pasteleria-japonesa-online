@@ -31,7 +31,7 @@ const Carrito = () => {
 
   const handlePagar = async () => {
     if (!usuario) {
-      navigate('/login', { state: { desde: '/carrito' } })
+      navigate('/login')
       return
     }
 
