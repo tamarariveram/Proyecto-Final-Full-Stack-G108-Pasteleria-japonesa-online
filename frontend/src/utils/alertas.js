@@ -15,3 +15,7 @@ export const avisoAgregado = (nombre) => {
 export const avisoSinStock = () => {
   toast.fire({ icon: 'warning', title: 'Ya tienes en el carrito todo el stock disponible' })
 }
+
+export const avisoExito = (mensaje) => {
+  toast.fire({ icon: 'success', title: mensaje })
+}
