@@ -1,6 +1,7 @@
 require('dotenv').config({ quiet: true })
 const express = require('express')
 const cors = require('cors')
+const authRoutes = require('./routes/auth.routes')
 const categoriasRoutes = require('./routes/categorias.routes')
 const productosRoutes = require('./routes/productos.routes')
 
@@ -13,6 +14,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'API de Kashi funcionando' })
 })
 
+app.use('/api/auth', authRoutes)
 app.use('/api/categorias', categoriasRoutes)
 app.use('/api/productos', productosRoutes)
 
