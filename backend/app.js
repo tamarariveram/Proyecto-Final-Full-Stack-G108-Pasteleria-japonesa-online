@@ -4,6 +4,7 @@ const cors = require('cors')
 const authRoutes = require('./routes/auth.routes')
 const categoriasRoutes = require('./routes/categorias.routes')
 const productosRoutes = require('./routes/productos.routes')
+const pedidosRoutes = require('./routes/pedidos.routes')
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/categorias', categoriasRoutes)
 app.use('/api/productos', productosRoutes)
+app.use('/api/pedidos', pedidosRoutes)
 
 app.use((req, res) => {
   res.status(404).json({ message: 'La ruta no existe' })
