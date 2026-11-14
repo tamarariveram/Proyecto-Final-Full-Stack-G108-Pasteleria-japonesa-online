@@ -26,10 +26,10 @@ Autora: Tamara Rivera
 | Capa | Tecnología |
 |---|---|
 | Frontend | React + Vite, React Router, Context API, React Bootstrap, SweetAlert2 |
-| Backend | Node.js, Express, JWT, bcryptjs |
-| Base de datos | PostgreSQL |
+| Backend | Node.js, Express, pg, JWT (jsonwebtoken), bcryptjs, CORS |
+| Base de datos | PostgreSQL en Neon |
 | Testing | Jest + Supertest |
-| Despliegue | Vercel (frontend) · Render (backend) · Supabase o Neon (base de datos) |
+| Despliegue | Vercel (frontend) · Render (backend) · Neon (base de datos) |
 
 ## Instalación (frontend)
 
@@ -51,9 +51,97 @@ Abrir [http://localhost:5173](http://localhost:5173).
 | `npm run preview` | Muestra la versión de producción en local |
 | `npm run lint` | Revisa el código con ESLint |
 
+## Instalación (backend)
+
+Requisitos: Node.js 20.19 o superior y una base de datos PostgreSQL (el proyecto usa [Neon](https://neon.tech)).
+
+1. Crear la base de datos ejecutando [`backend/database/kashi.sql`](./backend/database/kashi.sql) en el SQL Editor de Neon (crea las tablas y carga datos de prueba).
+2. Instalar las dependencias:
+
+```bash
+cd backend
+npm install
+```
+
+3. Copiar `.env.example` como `.env` y completar las variables:
+
+| Variable | Qué es |
+|---|---|
+| `PORT` | Puerto del servidor (por defecto `3000`) |
+| `DB_CONNECTION_STRING` | Connection string de Neon, con `sslmode=verify-full` |
+| `JWT_SECRET` | Clave secreta para firmar los tokens |
+
+4. Levantar la API:
+
+```bash
+npm run dev
+```
+
+La API queda en [http://localhost:3000](http://localhost:3000).
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Levanta la API con nodemon (se reinicia al guardar) |
+| `npm start` | Levanta la API con node |
+| `npm test` | Corre los tests con Jest y Supertest |
+
+## Hito 3 · Backend
+
+API REST con Express conectada a PostgreSQL con `pg`. La autenticación usa `bcryptjs` para las contraseñas y JWT para las sesiones.
+
+### Estructura
+
+```
+backend
+├── app.js          Arma la app: cors, express.json y rutas
+├── index.js        Enciende el servidor y revisa la conexión a la base de datos
+├── controllers     Reciben la petición y deciden la respuesta
+├── database        kashi.sql: tablas y datos de prueba
+├── middlewares     validarToken, esAdmin, validarCredenciales, validarProducto, validarItems, validarEstado
+├── models          Consultas SQL con pg
+├── routes          Rutas de auth, categorías, productos y pedidos
+├── tests           Tests con Jest y Supertest
+└── utils           Conexión a la base de datos (Pool)
+```
+
+### Rutas
+
+| Método | Ruta | Acceso |
+|---|---|---|
+| POST | `/api/auth/register` | Público |
+| POST | `/api/auth/login` | Público |
+| GET | `/api/auth/me` | Cliente |
+| GET | `/api/categorias` | Público |
+| GET | `/api/productos` (`?categoria=` y `?destacado=true`) | Público |
+| GET | `/api/productos/:id` | Público |
+| POST | `/api/productos` | Admin |
+| PUT | `/api/productos/:id` | Admin |
+| DELETE | `/api/productos/:id` | Admin |
+| POST | `/api/pedidos` | Cliente |
+| GET | `/api/pedidos/mis-pedidos` | Cliente |
+| GET | `/api/pedidos` | Admin |
+| PATCH | `/api/pedidos/:id/estado` | Admin |
+
+El detalle de cada ruta está en el [contrato de la API](./documentation/API_CONTRACT.md).
+
+### Tests
+
+`npm test` corre 9 tests sobre 7 rutas y revisa los códigos 200, 400, 401, 403, 404 y 409. No modifican los datos de la base de datos.
+
+### Requerimientos del hito
+
+| Requerimiento | Dónde |
+|---|---|
+| Proyecto npm e instalación de dependencias | `backend/package.json` |
+| Uso de `pg` para gestionar la base de datos | `utils/dbConnection.js` y `models/` |
+| Autenticación y autorización con JWT | `controllers/auth.controller.js` y `middlewares/auth.middleware.js` |
+| CORS como middleware | `app.js` |
+| Middlewares que validan token y credenciales | `middlewares/` y su uso en `routes/` |
+| Tests de 4 o más rutas con distintos códigos | `tests/server.spec.js` |
+
 ## Hito 2 · Frontend
 
-Por ahora la app usa **datos simulados** (carpeta `src/data`) con los mismos campos del [contrato de la API](./documentation/API_CONTRACT.md). El carrito, la sesión, los productos y los pedidos se guardan en el `localStorage` del navegador. En el Hito 3 los contextos pasarán a usar `fetch` contra el backend.
+Por ahora la app usa **datos simulados** (carpeta `src/data`) con los mismos campos del [contrato de la API](./documentation/API_CONTRACT.md). El carrito, la sesión, los productos y los pedidos se guardan en el `localStorage` del navegador. En el Hito 4 los contextos pasarán a usar `fetch` contra el backend.
 
 ### Estructura
 

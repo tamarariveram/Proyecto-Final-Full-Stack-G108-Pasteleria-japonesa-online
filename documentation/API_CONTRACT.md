@@ -1,6 +1,6 @@
 # Kashi · Contrato de la API REST
 
-Proyecto Final G108 · Hito 1 · Tamara Rivera
+Proyecto Final G108 · Tamara Rivera · Actualizado en el Hito 3
 
 Versión PDF: [`API_CONTRACT.pdf`](./API_CONTRACT.pdf)
 
@@ -236,6 +236,24 @@ Acceso: admin. Todos los pedidos de la tienda. Cada pedido trae además `usuario
 
 Errores: `401` · `403`
 
+### PATCH /api/pedidos/:id/estado
+
+Acceso: admin. Cambia el estado de un pedido desde el panel de pedidos. Se agregó en el Hito 3.
+
+Envía:
+
+```json
+{ "estado": "pagado" }
+```
+
+Responde `200`:
+
+```json
+{ "id": "9c8b7a6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d", "estado": "pagado" }
+```
+
+Errores: `400` estado distinto de pendiente, pagado o entregado · `401` · `403` · `404` el pedido no existe
+
 ---
 
 ## Resumen
@@ -254,3 +272,4 @@ Errores: `401` · `403`
 | POST | /api/pedidos | Cliente | Carrito |
 | GET | /api/pedidos/mis-pedidos | Cliente | Mi perfil |
 | GET | /api/pedidos | Admin | Pedidos admin |
+| PATCH | /api/pedidos/:id/estado | Admin | Pedidos admin |

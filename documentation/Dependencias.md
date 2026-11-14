@@ -1,6 +1,6 @@
 # Kashi · Dependencias del proyecto
 
-Proyecto Final G108 · Tamara Rivera · Actualizado en el Hito 2
+Proyecto Final G108 · Tamara Rivera · Actualizado en el Hito 3
 
 > Versión con diseño: [`Dependencias.pdf`](./Dependencias.pdf)
 
@@ -33,7 +33,6 @@ Proyecto creado con `npm init -y`
 |---|---|---|
 | `express` | Producción | Servidor y rutas de la API REST |
 | `pg` | Producción | Conexión y consultas a PostgreSQL |
-| `pg-format` | Producción | Construir consultas dinámicas de forma segura (filtros de la galería) |
 | `bcryptjs` | Producción | Encriptar y comparar contraseñas |
 | `jsonwebtoken` | Producción | Firmar y verificar tokens JWT |
 | `cors` | Producción | Permitir peticiones desde el frontend (otro origen) |
@@ -41,9 +40,10 @@ Proyecto creado con `npm init -y`
 | `nodemon` | Desarrollo | Reiniciar el servidor automáticamente al guardar |
 | `jest` | Desarrollo | Framework de testing |
 | `supertest` | Desarrollo | Probar las rutas de la API con peticiones HTTP |
+| Thunder Client | Desarrollo | Extensión de VS Code para probar las rutas de la API (no se instala con npm) |
 
 ```bash
-npm install express pg pg-format bcryptjs jsonwebtoken cors dotenv
+npm install express pg bcryptjs jsonwebtoken cors dotenv
 npm install -D nodemon jest supertest
 ```
 
@@ -53,4 +53,4 @@ npm install -D nodemon jest supertest
 |---|---|
 | PostgreSQL | Base de datos relacional |
 | Vercel / Render | Despliegue del frontend (Vercel) y del backend (Render) |
-| Supabase / Neon | Base de datos PostgreSQL online |
+| Neon | Base de datos PostgreSQL online |
