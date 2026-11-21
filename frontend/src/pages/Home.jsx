@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { Row, Col, Button } from 'react-bootstrap'
+import { Row, Col, Button, Alert } from 'react-bootstrap'
 import ProductCard from '../components/ProductCard'
+import Cargando from '../components/Cargando'
 import { useProductos } from '../hooks/useProductos'
 
 const beneficios = [
@@ -10,7 +11,7 @@ const beneficios = [
 ]
 
 const Home = () => {
-  const { productos } = useProductos()
+  const { productos, cargando, error } = useProductos()
   const destacados = productos.filter((producto) => producto.destacado)
 
   return (
@@ -38,13 +39,17 @@ const Home = () => {
             Ver todos
           </Button>
         </div>
-        <Row xs={1} sm={2} lg={4} className="g-4">
-          {destacados.map((producto) => (
-            <Col key={producto.id}>
-              <ProductCard producto={producto} />
-            </Col>
-          ))}
-        </Row>
+        {cargando && <Cargando />}
+        {error && <Alert variant="warning">{error}</Alert>}
+        {!cargando && !error && (
+          <Row xs={1} sm={2} lg={4} className="g-4">
+            {destacados.map((producto) => (
+              <Col key={producto.id}>
+                <ProductCard producto={producto} />
+              </Col>
+            ))}
+          </Row>
+        )}
       </section>
 
       <section className="pb-4">

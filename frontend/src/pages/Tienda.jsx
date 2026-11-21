@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { Row, Col } from 'react-bootstrap'
+import { Row, Col, Alert } from 'react-bootstrap'
 import ProductCard from '../components/ProductCard'
 import CategoryFilter from '../components/CategoryFilter'
+import Cargando from '../components/Cargando'
 import { useProductos } from '../hooks/useProductos'
 
 const Tienda = () => {
   const [categoriaActiva, setCategoriaActiva] = useState('Todas')
-  const { productos, categorias } = useProductos()
+  const { productos, categorias, cargando, error } = useProductos()
 
   const productosFiltrados =
     categoriaActiva === 'Todas'
@@ -26,16 +27,22 @@ const Tienda = () => {
           />
         </Col>
         <Col lg={9}>
-          <p className="text-muted">
-            {productosFiltrados.length} {productosFiltrados.length === 1 ? 'producto' : 'productos'}
-          </p>
-          <Row xs={1} sm={2} xl={3} className="g-4">
-            {productosFiltrados.map((producto) => (
-              <Col key={producto.id}>
-                <ProductCard producto={producto} />
-              </Col>
-            ))}
-          </Row>
+          {cargando && <Cargando />}
+          {error && <Alert variant="warning">{error}</Alert>}
+          {!cargando && !error && (
+            <>
+              <p className="text-muted">
+                {productosFiltrados.length} {productosFiltrados.length === 1 ? 'producto' : 'productos'}
+              </p>
+              <Row xs={1} sm={2} xl={3} className="g-4">
+                {productosFiltrados.map((producto) => (
+                  <Col key={producto.id}>
+                    <ProductCard producto={producto} />
+                  </Col>
+                ))}
+              </Row>
+            </>
+          )}
         </Col>
       </Row>
     </main>

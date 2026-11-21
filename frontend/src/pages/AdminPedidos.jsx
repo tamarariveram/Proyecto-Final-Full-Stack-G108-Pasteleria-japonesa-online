@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Table, Button, Form } from 'react-bootstrap'
 import AdminNav from '../components/AdminNav'
 import { usePedidos } from '../hooks/usePedidos'
+import Swal from 'sweetalert2'
 import { avisoExito } from '../utils/alertas'
 import { estadosPedido } from '../utils/constantes'
 import { formatearPrecio, formatearFecha } from '../utils/formato'
@@ -16,8 +17,14 @@ const AdminPedidos = () => {
 
   const contar = (estado) => (estado === 'todos' ? pedidos.length : pedidos.filter((pedido) => pedido.estado === estado).length)
 
-  const handleEstado = (id, estado) => {
-    cambiarEstado(id, estado)
+  const handleEstado = async (id, estado) => {
+    const resultado = await cambiarEstado(id, estado)
+
+    if (!resultado.ok) {
+      Swal.fire({ title: 'No se pudo cambiar el estado', text: resultado.mensaje, icon: 'error', confirmButtonColor: '#2f4a3a' })
+      return
+    }
+
     avisoExito(`Pedido marcado como ${estado}`)
   }
 

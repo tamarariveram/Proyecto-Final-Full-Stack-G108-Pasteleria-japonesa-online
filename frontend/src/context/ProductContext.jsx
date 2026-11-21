@@ -1,40 +1,82 @@
 import { createContext, useEffect, useState } from 'react'
-import { productos as productosIniciales } from '../data/productos'
-import { categorias } from '../data/categorias'
+import { useAuth } from '../hooks/useAuth'
+import { API_URL, MENSAJE_SIN_CONEXION } from '../utils/api'
 
 export const ProductContext = createContext()
 
-const armarProducto = (datos) => {
-  const { categoria_id, ...resto } = datos
-  const categoria = categorias.find((item) => item.id === categoria_id)
-  return { ...resto, categoria }
+const pedirDatos = async (ruta) => {
+  const respuesta = await fetch(`${API_URL}${ruta}`)
+
+  if (!respuesta.ok) {
+    throw new Error(`Error ${respuesta.status} en ${ruta}`)
+  }
+
+  return respuesta.json()
 }
 
 const ProductProvider = ({ children }) => {
-  const [productos, setProductos] = useState(JSON.parse(localStorage.getItem('kashi-productos')) || productosIniciales)
+  const { token } = useAuth()
+  const [productos, setProductos] = useState([])
+  const [categorias, setCategorias] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    localStorage.setItem('kashi-productos', JSON.stringify(productos))
-  }, [productos])
+    const cargarDatos = async () => {
+      try {
+        setCategorias(await pedirDatos('/api/categorias'))
+        setProductos(await pedirDatos('/api/productos'))
+      } catch (error) {
+        console.error(error.message)
+        setError(MENSAJE_SIN_CONEXION)
+      } finally {
+        setCargando(false)
+      }
+    }
+
+    cargarDatos()
+  }, [])
+
+  const recargarProductos = async () => {
+    setProductos(await pedirDatos('/api/productos'))
+  }
 
   const obtenerProducto = (id) => productos.find((producto) => producto.id === id)
 
-  const crearProducto = (datos) => {
-    const nuevoProducto = { id: crypto.randomUUID(), ...armarProducto(datos) }
-    setProductos([nuevoProducto, ...productos])
-    return nuevoProducto
+  const enviarProducto = async (ruta, method, datos) => {
+    try {
+      const respuesta = await fetch(`${API_URL}${ruta}`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: datos ? JSON.stringify(datos) : undefined,
+      })
+      const data = await respuesta.json()
+
+      if (!respuesta.ok) {
+        return { ok: false, mensaje: data.message }
+      }
+
+      await recargarProductos()
+      return { ok: true }
+    } catch (error) {
+      console.error(error.message)
+      return { ok: false, mensaje: MENSAJE_SIN_CONEXION }
+    }
   }
 
-  const actualizarProducto = (id, datos) => {
-    setProductos(productos.map((producto) => (producto.id === id ? { id, ...armarProducto(datos) } : producto)))
-  }
+  const crearProducto = (datos) => enviarProducto('/api/productos', 'POST', datos)
 
-  const eliminarProducto = (id) => {
-    setProductos(productos.filter((producto) => producto.id !== id))
-  }
+  const actualizarProducto = (id, datos) => enviarProducto(`/api/productos/${id}`, 'PUT', datos)
+
+  const eliminarProducto = (id) => enviarProducto(`/api/productos/${id}`, 'DELETE')
 
   return (
-    <ProductContext.Provider value={{ productos, categorias, obtenerProducto, crearProducto, actualizarProducto, eliminarProducto }}>
+    <ProductContext.Provider
+      value={{ productos, categorias, cargando, error, obtenerProducto, recargarProductos, crearProducto, actualizarProducto, eliminarProducto }}
+    >
       {children}
     </ProductContext.Provider>
   )

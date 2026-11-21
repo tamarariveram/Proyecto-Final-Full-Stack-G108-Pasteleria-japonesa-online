@@ -1,62 +1,94 @@
 import { createContext, useEffect, useState } from 'react'
-import { usuarios } from '../data/usuarios'
+import { API_URL, MENSAJE_SIN_CONEXION } from '../utils/api'
 
 export const AuthContext = createContext()
 
-const datosPublicos = ({ id, nombre, email, rol }) => ({ id, nombre, email, rol })
-
 const AuthProvider = ({ children }) => {
-  const [usuario, setUsuario] = useState(JSON.parse(localStorage.getItem('kashi-usuario')))
-  const [cuentas, setCuentas] = useState(usuarios)
+  const [token, setToken] = useState(localStorage.getItem('kashi-token'))
+  const [usuario, setUsuario] = useState(token ? JSON.parse(localStorage.getItem('kashi-usuario')) : null)
 
   useEffect(() => {
-    if (usuario) {
+    if (token && usuario) {
+      localStorage.setItem('kashi-token', token)
       localStorage.setItem('kashi-usuario', JSON.stringify(usuario))
     } else {
+      localStorage.removeItem('kashi-token')
       localStorage.removeItem('kashi-usuario')
     }
-  }, [usuario])
+  }, [token, usuario])
 
-  const login = (email, password) => {
-    const cuenta = cuentas.find((item) => item.email === email.trim().toLowerCase() && item.password === password)
+  useEffect(() => {
+    if (!token) return
 
-    if (!cuenta) {
-      return { ok: false, mensaje: 'Correo o contraseña incorrectos' }
+    const revisarSesion = async () => {
+      try {
+        const respuesta = await fetch(`${API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        if (respuesta.status === 401) {
+          setToken(null)
+          setUsuario(null)
+        }
+      } catch (error) {
+        console.error(error.message)
+      }
     }
 
-    const sesion = datosPublicos(cuenta)
-    setUsuario(sesion)
-    return { ok: true, usuario: sesion }
+    revisarSesion()
+  }, [token])
+
+  const login = async (email, password) => {
+    try {
+      const respuesta = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await respuesta.json()
+
+      if (!respuesta.ok) {
+        return { ok: false, mensaje: data.message }
+      }
+
+      setToken(data.token)
+      setUsuario(data.usuario)
+      return { ok: true, usuario: data.usuario }
+    } catch (error) {
+      console.error(error.message)
+      return { ok: false, mensaje: MENSAJE_SIN_CONEXION }
+    }
   }
 
-  const registrar = (nombre, email, password) => {
-    const correo = email.trim().toLowerCase()
+  const registrar = async (nombre, email, password) => {
+    try {
+      const respuesta = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, password }),
+      })
+      const data = await respuesta.json()
 
-    if (cuentas.find((item) => item.email === correo)) {
-      return { ok: false, mensaje: 'Ya existe una cuenta con ese correo' }
+      if (!respuesta.ok) {
+        return { ok: false, mensaje: data.message }
+      }
+
+      return login(email, password)
+    } catch (error) {
+      console.error(error.message)
+      return { ok: false, mensaje: MENSAJE_SIN_CONEXION }
     }
-
-    const nuevaCuenta = {
-      id: crypto.randomUUID(),
-      nombre: nombre.trim(),
-      email: correo,
-      password,
-      rol: 'cliente',
-      created_at: new Date().toISOString(),
-    }
-
-    setCuentas([...cuentas, nuevaCuenta])
-    const sesion = datosPublicos(nuevaCuenta)
-    setUsuario(sesion)
-    return { ok: true, usuario: sesion }
   }
 
-  const logout = () => setUsuario(null)
+  const logout = () => {
+    setToken(null)
+    setUsuario(null)
+  }
 
   const esAdmin = usuario?.rol === 'admin'
 
   return (
-    <AuthContext.Provider value={{ usuario, esAdmin, login, registrar, logout }}>
+    <AuthContext.Provider value={{ usuario, token, esAdmin, login, registrar, logout }}>
       {children}
     </AuthContext.Provider>
   )

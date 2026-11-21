@@ -3,26 +3,13 @@ import { Table, Button, Badge } from 'react-bootstrap'
 import Swal from 'sweetalert2'
 import AdminNav from '../components/AdminNav'
 import { useProductos } from '../hooks/useProductos'
-import { usePedidos } from '../hooks/usePedidos'
+import { avisoExito } from '../utils/alertas'
 import { formatearPrecio } from '../utils/formato'
 
 const AdminProductos = () => {
   const { productos, eliminarProducto } = useProductos()
-  const { pedidos } = usePedidos()
-
-  const tienePedidos = (id) => pedidos.find((pedido) => pedido.items.find((item) => item.producto_id === id))
 
   const handleEliminar = async (producto) => {
-    if (tienePedidos(producto.id)) {
-      Swal.fire({
-        title: 'No se puede eliminar',
-        text: `${producto.nombre} tiene pedidos asociados. Puedes dejar su stock en 0 para ocultarlo de la venta.`,
-        icon: 'error',
-        confirmButtonColor: '#2f4a3a',
-      })
-      return
-    }
-
     const respuesta = await Swal.fire({
       title: '¿Eliminar producto?',
       text: `Se eliminará ${producto.nombre}.`,
@@ -33,9 +20,21 @@ const AdminProductos = () => {
       confirmButtonColor: '#c8102e',
     })
 
-    if (respuesta.isConfirmed) {
-      eliminarProducto(producto.id)
+    if (!respuesta.isConfirmed) return
+
+    const resultado = await eliminarProducto(producto.id)
+
+    if (!resultado.ok) {
+      Swal.fire({
+        title: 'No se puede eliminar',
+        text: resultado.mensaje,
+        icon: 'error',
+        confirmButtonColor: '#2f4a3a',
+      })
+      return
     }
+
+    avisoExito('Producto eliminado')
   }
 
   return (

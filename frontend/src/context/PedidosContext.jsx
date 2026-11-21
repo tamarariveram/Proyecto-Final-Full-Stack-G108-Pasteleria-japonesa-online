@@ -1,37 +1,90 @@
 import { createContext, useEffect, useState } from 'react'
-import { pedidos as pedidosIniciales } from '../data/pedidos'
+import { useAuth } from '../hooks/useAuth'
+import { useProductos } from '../hooks/useProductos'
+import { API_URL, MENSAJE_SIN_CONEXION } from '../utils/api'
 
 export const PedidosContext = createContext()
 
-const PedidosProvider = ({ children }) => {
-  const [pedidos, setPedidos] = useState(JSON.parse(localStorage.getItem('kashi-pedidos')) || pedidosIniciales)
+const pedirPedidos = async (token, esAdmin) => {
+  const ruta = esAdmin ? '/api/pedidos' : '/api/pedidos/mis-pedidos'
+  const respuesta = await fetch(`${API_URL}${ruta}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
 
-  useEffect(() => {
-    localStorage.setItem('kashi-pedidos', JSON.stringify(pedidos))
-  }, [pedidos])
-
-  const crearPedido = (usuario, carrito, total) => {
-    const nuevoPedido = {
-      id: crypto.randomUUID(),
-      total,
-      estado: 'pendiente',
-      created_at: new Date().toISOString(),
-      usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email },
-      items: carrito.map((item) => ({
-        producto_id: item.id,
-        nombre: item.nombre,
-        cantidad: item.cantidad,
-        precio_unitario: item.precio,
-        subtotal: item.precio * item.cantidad,
-      })),
-    }
-
-    setPedidos([nuevoPedido, ...pedidos])
-    return nuevoPedido
+  if (!respuesta.ok) {
+    throw new Error(`Error ${respuesta.status} en ${ruta}`)
   }
 
-  const cambiarEstado = (id, estado) => {
-    setPedidos(pedidos.map((pedido) => (pedido.id === id ? { ...pedido, estado } : pedido)))
+  return respuesta.json()
+}
+
+const PedidosProvider = ({ children }) => {
+  const { token, esAdmin } = useAuth()
+  const { recargarProductos } = useProductos()
+  const [pedidos, setPedidos] = useState([])
+
+  useEffect(() => {
+    if (!token) return
+
+    const cargarPedidos = async () => {
+      try {
+        setPedidos(await pedirPedidos(token, esAdmin))
+      } catch (error) {
+        console.error(error.message)
+      }
+    }
+
+    cargarPedidos()
+  }, [token, esAdmin])
+
+  const crearPedido = async (carrito) => {
+    try {
+      const items = carrito.map((item) => ({ producto_id: item.id, cantidad: item.cantidad }))
+      const respuesta = await fetch(`${API_URL}/api/pedidos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ items }),
+      })
+      const data = await respuesta.json()
+
+      if (!respuesta.ok) {
+        return { ok: false, mensaje: data.message }
+      }
+
+      setPedidos(await pedirPedidos(token, esAdmin))
+      await recargarProductos()
+      return { ok: true, pedido: data }
+    } catch (error) {
+      console.error(error.message)
+      return { ok: false, mensaje: MENSAJE_SIN_CONEXION }
+    }
+  }
+
+  const cambiarEstado = async (id, estado) => {
+    try {
+      const respuesta = await fetch(`${API_URL}/api/pedidos/${id}/estado`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ estado }),
+      })
+      const data = await respuesta.json()
+
+      if (!respuesta.ok) {
+        return { ok: false, mensaje: data.message }
+      }
+
+      setPedidos(pedidos.map((pedido) => (pedido.id === id ? { ...pedido, estado } : pedido)))
+      return { ok: true }
+    } catch (error) {
+      console.error(error.message)
+      return { ok: false, mensaje: MENSAJE_SIN_CONEXION }
+    }
   }
 
   const pedidosDe = (usuarioId) => {
@@ -41,7 +94,7 @@ const PedidosProvider = ({ children }) => {
   }
 
   return (
-    <PedidosContext.Provider value={{ pedidos, crearPedido, cambiarEstado, pedidosDe }}>
+    <PedidosContext.Provider value={{ pedidos: token ? pedidos : [], crearPedido, cambiarEstado, pedidosDe }}>
       {children}
     </PedidosContext.Provider>
   )

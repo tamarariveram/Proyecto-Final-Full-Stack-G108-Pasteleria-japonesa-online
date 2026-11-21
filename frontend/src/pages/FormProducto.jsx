@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Row, Col, Card, Form, Button, Alert } from 'react-bootstrap'
+import Cargando from '../components/Cargando'
 import { useProductos } from '../hooks/useProductos'
 import { avisoExito } from '../utils/alertas'
 import { formatearPrecio } from '../utils/formato'
@@ -27,38 +28,26 @@ const aFormulario = (producto) => ({
 
 const esEnteroValido = (valor, minimo) => valor !== '' && Number.isInteger(Number(valor)) && Number(valor) >= minimo
 
-const FormProducto = () => {
-  const { id } = useParams()
-  const { categorias, obtenerProducto, crearProducto, actualizarProducto } = useProductos()
+const FormularioProducto = ({ producto }) => {
+  const { categorias, crearProducto, actualizarProducto } = useProductos()
   const navigate = useNavigate()
   const inputNombre = useRef(null)
-  const esEdicion = Boolean(id)
-  const producto = esEdicion ? obtenerProducto(id) : null
+  const esEdicion = Boolean(producto)
 
-  const [formulario, setFormulario] = useState(() => (producto ? aFormulario(producto) : formularioVacio))
+  const [formulario, setFormulario] = useState(producto ? aFormulario(producto) : formularioVacio)
   const [error, setError] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
   useEffect(() => {
     inputNombre.current?.focus()
   }, [])
-
-  if (esEdicion && !producto) {
-    return (
-      <main className="container py-5 text-center">
-        <h1 className="h3">Producto no encontrado</h1>
-        <Button as={Link} to="/admin" variant="dark" className="mt-3">
-          Volver al panel
-        </Button>
-      </main>
-    )
-  }
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target
     setFormulario({ ...formulario, [name]: type === 'checkbox' ? checked : value })
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     const { nombre, descripcion, precio, stock, imagen_url, categoria_id } = formulario
 
@@ -86,13 +75,16 @@ const FormProducto = () => {
       stock: Number(stock),
     }
 
-    if (esEdicion) {
-      actualizarProducto(id, datos)
-      avisoExito('Producto actualizado')
-    } else {
-      crearProducto(datos)
-      avisoExito('Producto creado')
+    setEnviando(true)
+    const resultado = esEdicion ? await actualizarProducto(producto.id, datos) : await crearProducto(datos)
+    setEnviando(false)
+
+    if (!resultado.ok) {
+      setError(resultado.mensaje)
+      return
     }
+
+    avisoExito(esEdicion ? 'Producto actualizado' : 'Producto creado')
 
     navigate('/admin')
   }
@@ -148,8 +140,8 @@ const FormProducto = () => {
                 </Form.Group>
                 <Form.Check className="mb-4" type="switch" id="producto-destacado" name="destacado" label="Mostrar en destacados" checked={formulario.destacado} onChange={handleChange} />
                 <div className="d-flex gap-2">
-                  <Button type="submit" variant="dark" className="rounded-pill px-4">
-                    {esEdicion ? 'Guardar cambios' : 'Crear producto'}
+                  <Button type="submit" variant="dark" className="rounded-pill px-4" disabled={enviando}>
+                    {enviando ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear producto'}
                   </Button>
                   <Button as={Link} to="/admin" variant="outline-dark" className="rounded-pill px-4">
                     Cancelar
@@ -176,6 +168,34 @@ const FormProducto = () => {
       </Row>
     </main>
   )
+}
+
+const FormProducto = () => {
+  const { id } = useParams()
+  const { cargando, obtenerProducto } = useProductos()
+
+  if (!id) {
+    return <FormularioProducto />
+  }
+
+  if (cargando) {
+    return <Cargando />
+  }
+
+  const producto = obtenerProducto(id)
+
+  if (!producto) {
+    return (
+      <main className="container py-5 text-center">
+        <h1 className="h3">Producto no encontrado</h1>
+        <Button as={Link} to="/admin" variant="dark" className="mt-3">
+          Volver al panel
+        </Button>
+      </main>
+    )
+  }
+
+  return <FormularioProducto producto={producto} />
 }
 
 export default FormProducto

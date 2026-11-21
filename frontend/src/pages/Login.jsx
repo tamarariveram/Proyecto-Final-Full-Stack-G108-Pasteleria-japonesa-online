@@ -8,11 +8,12 @@ const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [enviando, setEnviando] = useState(false)
   const { login } = useAuth()
   const { cantidadTotal } = useCart()
   const navigate = useNavigate()
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     if (!email || !password) {
@@ -20,7 +21,9 @@ const Login = () => {
       return
     }
 
-    const resultado = login(email, password)
+    setEnviando(true)
+    const resultado = await login(email, password)
+    setEnviando(false)
 
     if (!resultado.ok) {
       setError(resultado.mensaje)
@@ -51,8 +54,8 @@ const Login = () => {
               <Form.Label>Contraseña</Form.Label>
               <Form.Control type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" />
             </Form.Group>
-            <Button type="submit" variant="dark" className="w-100 rounded-pill">
-              Ingresar
+            <Button type="submit" variant="dark" className="w-100 rounded-pill" disabled={enviando}>
+              {enviando ? 'Ingresando...' : 'Ingresar'}
             </Button>
           </Form>
           <p className="text-center mt-3 mb-0">

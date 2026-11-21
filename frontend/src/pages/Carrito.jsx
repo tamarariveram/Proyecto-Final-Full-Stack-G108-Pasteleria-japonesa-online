@@ -46,7 +46,18 @@ const Carrito = () => {
     })
 
     if (respuesta.isConfirmed) {
-      crearPedido(usuario, carrito, total)
+      const resultado = await crearPedido(carrito)
+
+      if (!resultado.ok) {
+        Swal.fire({
+          title: 'No pudimos crear tu pedido',
+          text: resultado.mensaje,
+          icon: 'error',
+          confirmButtonColor: '#2f4a3a',
+        })
+        return
+      }
+
       vaciarCarrito()
       await Swal.fire({
         title: '¡Gracias por tu compra!',

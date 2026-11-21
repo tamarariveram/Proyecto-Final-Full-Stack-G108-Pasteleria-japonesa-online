@@ -9,6 +9,7 @@ const formularioInicial = { nombre: '', email: '', password: '', confirmar: '' }
 const Registro = () => {
   const [formulario, setFormulario] = useState(formularioInicial)
   const [error, setError] = useState('')
+  const [enviando, setEnviando] = useState(false)
   const { registrar } = useAuth()
   const { cantidadTotal } = useCart()
   const navigate = useNavigate()
@@ -18,7 +19,7 @@ const Registro = () => {
     setFormulario({ ...formulario, [name]: value })
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     const { nombre, email, password, confirmar } = formulario
 
@@ -42,7 +43,9 @@ const Registro = () => {
       return
     }
 
-    const resultado = registrar(nombre, email, password)
+    setEnviando(true)
+    const resultado = await registrar(nombre, email, password)
+    setEnviando(false)
 
     if (!resultado.ok) {
       setError(resultado.mensaje)
@@ -79,8 +82,8 @@ const Registro = () => {
               <Form.Label>Repite la contraseña</Form.Label>
               <Form.Control type="password" name="confirmar" value={formulario.confirmar} onChange={handleChange} autoComplete="new-password" />
             </Form.Group>
-            <Button type="submit" variant="dark" className="w-100 rounded-pill">
-              Crear cuenta
+            <Button type="submit" variant="dark" className="w-100 rounded-pill" disabled={enviando}>
+              {enviando ? 'Creando cuenta...' : 'Crear cuenta'}
             </Button>
           </Form>
           <p className="text-center mt-3 mb-0">
