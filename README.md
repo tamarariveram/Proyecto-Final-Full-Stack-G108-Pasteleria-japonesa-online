@@ -3,7 +3,13 @@
 Proyecto Final · Desarrollo Full Stack JavaScript · Desafío Latam G108
 Autora: Tamara Rivera
 
-🌐 **Demo:** [kashi-steel.vercel.app](https://kashi-steel.vercel.app/)
+| Parte | Dónde está publicada |
+|---|---|
+| 🌐 Aplicación (frontend) | [kashi-steel.vercel.app](https://kashi-steel.vercel.app/) · Vercel |
+| ⚙️ API (backend) | [kashi-api-v2w2.onrender.com](https://kashi-api-v2w2.onrender.com/) · Render |
+| 🗄️ Base de datos | PostgreSQL · Neon |
+
+> La API está en el plan gratuito de Render y se duerme si no recibe visitas. La primera carga puede tardar hasta un minuto.
 
 **Cuentas de prueba**
 
@@ -39,6 +45,15 @@ Requisitos: Node.js 20.19 o superior y npm.
 git clone https://github.com/tamarariveram/Proyecto-Final-Full-Stack-G108-Pasteleria-japonesa-online.git
 cd Proyecto-Final-Full-Stack-G108-Pasteleria-japonesa-online/frontend
 npm install
+```
+
+Copiar `.env.example` como `.env` y completar la variable:
+
+| Variable | Qué es |
+|---|---|
+| `VITE_API_URL` | Dirección de la API, sin `/` al final. En local `http://localhost:3000`; para usar la API publicada `https://kashi-api-v2w2.onrender.com` |
+
+```bash
 npm run dev
 ```
 
@@ -84,6 +99,42 @@ La API queda en [http://localhost:3000](http://localhost:3000).
 | `npm run dev` | Levanta la API con nodemon (se reinicia al guardar) |
 | `npm start` | Levanta la API con node |
 | `npm test` | Corre los tests con Jest y Supertest |
+
+## Hito 4 · Integración y despliegue
+
+El frontend dejó de usar datos simulados: los contextos ahora piden y envían los datos a la API con `fetch`, y todo queda guardado en la base de datos.
+
+### Despliegue
+
+| Parte | Servicio | Configuración |
+|---|---|---|
+| Frontend | Vercel | Root Directory `frontend` · variable `VITE_API_URL` · `vercel.json` para que las rutas de React funcionen al recargar |
+| Backend | Render | Root Directory `backend` · Build `npm install` · Start `npm start` · variables `DB_CONNECTION_STRING` y `JWT_SECRET` |
+| Base de datos | Neon | PostgreSQL creado con `backend/database/kashi.sql` |
+
+Los archivos `.env` no se suben al repositorio: cada servicio guarda sus propias variables.
+
+### Cómo se conecta el frontend
+
+| Archivo | Qué hace |
+|---|---|
+| `utils/api.js` | Lee la dirección de la API desde `import.meta.env.VITE_API_URL` |
+| `AuthContext` | Login y registro con la API. Guarda el token y lo revisa con `GET /api/auth/me` al recargar |
+| `ProductContext` | Trae productos y categorías. Crea, edita y elimina enviando el token |
+| `PedidosContext` | Crea pedidos (el precio lo pone el backend), trae los pedidos y cambia su estado |
+| `CartContext` | El carrito sigue en `localStorage` hasta el momento de pagar |
+| `components/Cargando.jsx` | Se muestra mientras llegan los datos |
+
+Cada página muestra un mensaje si la API responde con error (por ejemplo, el 409 al eliminar un producto con pedidos).
+
+### Requerimientos del hito
+
+| Requerimiento | Dónde |
+|---|---|
+| Deploy de la aplicación cliente | [kashi-steel.vercel.app](https://kashi-steel.vercel.app/) |
+| Deploy de la aplicación backend | [kashi-api-v2w2.onrender.com](https://kashi-api-v2w2.onrender.com/) |
+| Deploy de la base de datos | Neon |
+| Integración del cliente con el backend en producción | Contextos en `frontend/src/context` con `fetch`. Los pedidos, productos y estados quedan guardados en Neon |
 
 ## Hito 3 · Backend
 
@@ -141,18 +192,17 @@ El detalle de cada ruta está en el [contrato de la API](./documentation/API_CON
 
 ## Hito 2 · Frontend
 
-Por ahora la app usa **datos simulados** (carpeta `src/data`) con los mismos campos del [contrato de la API](./documentation/API_CONTRACT.md). El carrito, la sesión, los productos y los pedidos se guardan en el `localStorage` del navegador. En el Hito 4 los contextos pasarán a usar `fetch` contra el backend.
+En este hito la app usaba **datos simulados** con los mismos campos del [contrato de la API](./documentation/API_CONTRACT.md). Desde el Hito 4 los datos vienen del backend.
 
 ### Estructura
 
 ```
 frontend/src
-├── components   Header, Footer, ProductCard, CartItem, CategoryFilter, rutas protegidas...
+├── components   Header, Footer, ProductCard, CartItem, CategoryFilter, Cargando, rutas protegidas...
 ├── context      AuthContext, ProductContext, PedidosContext, CartContext
-├── data         Datos simulados (productos, categorías, usuarios, pedidos)
 ├── hooks        useAuth, useProductos, usePedidos, useCart
 ├── pages        Una vista por ruta
-└── utils        Formato de precios y fechas, alertas
+└── utils        Dirección de la API, formato de precios y fechas, alertas
 ```
 
 ### Qué se puede hacer
